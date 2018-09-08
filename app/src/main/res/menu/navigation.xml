@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_class"
+        android:icon="@drawable/ic_widgets_black_24dp"
+        android:title="@string/title_class" />
+
+    <item
+        android:id="@+id/navigation_setting"
+        android:icon="@drawable/ic_account_box_black_24dp"
+        android:title="@string/title_setting" />
+
+</menu>

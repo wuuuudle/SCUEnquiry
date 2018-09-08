@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SCUEnquiry</string>
+    <string name="title_class">课表</string>
+    <string name="title_setting">个人中心</string>
+</resources>
