@@ -24,8 +24,12 @@ public class ExampleUnitTest
     @Test
     public void login_test()
     {
-        Login login=new Login();
-        login.login("2017141463221", "244132");
+        Login login=Login.loginWithZM("2017141463221", "244132");
+        if(login == null)
+        {
+            System.out.println("登录错误");
+            return;
+        }
         callback backdata = login.getClassInformation();
         Data data = backdata.getDateList()[0];
         SelectCourse[] courses = data.getSelectCourseList();

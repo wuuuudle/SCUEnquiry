@@ -2,43 +2,27 @@ package com.wuuuudle.URP;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Set;
 
 public class Login
 {
     public String cookies = null;
-
-    public static void main(String[] args)
+    private static Login login;
+    public static Login loginWithZM(String zjh, String mm)
     {
-        Login login = new Login();
-
-        System.out.println(login.login("2017141463221","244132"));
-        //System.out.println(login.login("JSESSIONID=bca0eLNwM4Tfvd-M5D6ww"));
-        //System.out.println(login.cookies);
-        callback back = login.getClassInformation();
-        Data[] dataList = back.getDateList();
-        SelectCourse[] selectCourses = dataList[0].getSelectCourseList();
-
-
-        //System.out.println(back.getAllUnits());
-        /*for(SelectCourse temp : selectCourses)
+        Login log = new Login ();
+        if(log.login(zjh, mm))
         {
-            System.out.print(temp.getTimeAndPlaceList()[0].getTeachingBuildingName()+" ");
-            System.out.print(temp.getTimeAndPlaceList()[0].getClassroomName()+" ");
-            System.out.println(temp.getCourseName());
-        }*/
-        JSONObject jsonObject = (JSONObject) JSONArray.parseArray(back.getXkxx()).get(0);
-        Set<String> key = jsonObject.keySet();
-        for(String keys:key)
-        {
-            System.out.println(keys);
+            login=log;
         }
+        return log;
+    }
 
-
+    public static Login loginWithZM()
+    {
+        return login;
     }
 
     public boolean login(String zjh, String mm)
