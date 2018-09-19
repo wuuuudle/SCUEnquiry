@@ -1,5 +1,7 @@
 package com.wuuuudle.URP;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import java.io.*;
@@ -9,7 +11,7 @@ import java.net.URL;
 public class Login
 {
     public String cookies = null;
-    private static Login login;
+    private static Login login=null;
     public static Login loginWithZM(String zjh, String mm)
     {
         Login log = new Login ();
@@ -17,7 +19,7 @@ public class Login
         {
             login=log;
         }
-        return log;
+        return login;
     }
 
     public static Login loginWithZM()
