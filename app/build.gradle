@@ -28,4 +28,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('libs/fastjson-1.2.47.jar')
     implementation 'com.android.support:support-v4:28.0.0-rc02'
+    implementation 'com.android.support:gridlayout-v7:28.0.0-rc02'
 }

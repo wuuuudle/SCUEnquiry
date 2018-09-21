@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.Constraints;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wuuuudle.URP.Data;
@@ -17,6 +20,7 @@ import com.wuuuudle.URP.Login;
 import com.wuuuudle.URP.SelectCourse;
 import com.wuuuudle.URP.TimeAndPlace;
 import com.wuuuudle.URP.callback;
+
 
 public class MainActivity extends AppCompatActivity
 {
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity
             switch (msg.what)
             {
                 case 1:
-                    ((EditText)findViewById(R.id.editText2)).setText((String)msg.obj);
+                    //((EditText)findViewById(R.id.editText2)).setText((String)msg.obj);
             }
         }
     };
@@ -58,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if (Login.loginWithZM() == null)
         {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -81,14 +86,15 @@ public class MainActivity extends AppCompatActivity
                 for (SelectCourse temp : courses)
                 {
                     Log.e("E", temp.getAttendClassTeacher() + " " + temp.getCourseName());
-                    String add="";
-                    for(TimeAndPlace tt : temp.getTimeAndPlaceList())
+                    String add = "";
+                    for (TimeAndPlace tt : temp.getTimeAndPlaceList())
                     {
-                        add+= tt.getTeachingBuildingName()+tt.getClassroomName() + " ";
+                        add += tt.getTeachingBuildingName() + tt.getClassroomName() + " ";
                     }
 
-                    send+=add + temp.getCourseName() + "\n";
+                    send += add + temp.getCourseName() + "\n";
                 }
+
                 message.obj = send;
                 handler.sendMessage(message);
             }
