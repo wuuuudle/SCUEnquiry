@@ -1,6 +1,7 @@
 package com.wuuuudle.scuenquiry;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,7 +11,9 @@ import android.support.constraint.Constraints;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,16 +66,16 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (Login.loginWithZM() == null)
+        /*if (Login.loginWithZM() == null)
         {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
-        }
+        }*/
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        new Thread(new Runnable()
+        /*new Thread(new Runnable()
         {
             @Override
             public void run()
@@ -98,7 +101,28 @@ public class MainActivity extends AppCompatActivity
                 message.obj = send;
                 handler.sendMessage(message);
             }
-        }).start();
+        }).start();*/
+
+
+
+        TextView textView = new TextView(getApplicationContext());
+        textView.setText("this is a test");
+
+        android.support.v7.widget.GridLayout.Spec columnSpec = android.support.v7.widget.GridLayout.spec(3,1,1);
+        android.support.v7.widget.GridLayout.Spec rowSpec = android.support.v7.widget.GridLayout.spec(2,2,2);
+        android.support.v7.widget.GridLayout.LayoutParams layoutParams = new android.support.v7.widget.GridLayout.LayoutParams(rowSpec, columnSpec);
+        textView.setLayoutParams(layoutParams);
+
+        textView.setGravity(Gravity.CENTER);
+        textView.setWidth(-2);
+        textView.setHeight(-2);
+        textView.setBackgroundColor(Color.YELLOW);
+
+        android.support.v7.widget.GridLayout gridLayout = findViewById(R.id.gridlayout);
+
+        gridLayout.addView(textView);
+
+
 
     }
 
