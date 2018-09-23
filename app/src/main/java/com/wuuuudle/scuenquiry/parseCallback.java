@@ -82,13 +82,16 @@ public class parseCallback
         android.support.v7.widget.GridLayout.Spec columnSpec = android.support.v7.widget.GridLayout.spec(week[classDay], 1, 1);
         android.support.v7.widget.GridLayout.Spec rowSpec = android.support.v7.widget.GridLayout.spec(classSessions, continuingSession, continuingSession);
         android.support.v7.widget.GridLayout.LayoutParams layoutParams = new android.support.v7.widget.GridLayout.LayoutParams(rowSpec, columnSpec);
-        textView.setLayoutParams(layoutParams);
 
+        textView.setLayoutParams(layoutParams);
+        textView.setBackgroundResource(R.drawable.text_view_border);
         textView.setGravity(Gravity.CENTER);
         textView.setWidth(-2);
         textView.setHeight(-2);
-        textView.setBackgroundColor(color);
+
+        //textView.setBackgroundColor(color);
         textView.setTextSize(8);
+
         return textView;
     }
 }
