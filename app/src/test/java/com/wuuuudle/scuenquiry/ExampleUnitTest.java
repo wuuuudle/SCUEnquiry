@@ -37,7 +37,5 @@ public class ExampleUnitTest
         {
             System.out.println(temp.getAttendClassTeacher()+" "+temp.getCourseName());
         }
-
-
     }
 }

@@ -1,32 +1,30 @@
 package com.wuuuudle.scuenquiry;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.Constraints;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
-import android.widget.GridLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.wuuuudle.URP.Data;
 import com.wuuuudle.URP.Login;
-import com.wuuuudle.URP.SelectCourse;
-import com.wuuuudle.URP.TimeAndPlace;
 import com.wuuuudle.URP.callback;
+import com.wuuuudle.scuenquiry.Fragment.ClassFragment;
+import com.wuuuudle.scuenquiry.Fragment.PersionFragment;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity
 {
+    private ViewPager viewPager;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener()
@@ -38,10 +36,10 @@ public class MainActivity extends AppCompatActivity
             switch (item.getItemId())
             {
                 case R.id.navigation_class:
-                    Toast.makeText(getApplicationContext(), "课表", Toast.LENGTH_SHORT).show();
+                    viewPager.setCurrentItem(0, true);
                     return true;
                 case R.id.navigation_setting:
-                    Toast.makeText(getApplicationContext(), "个人中心", Toast.LENGTH_SHORT).show();
+                    viewPager.setCurrentItem(1, true);
                     return true;
             }
             return false;
@@ -55,7 +53,15 @@ public class MainActivity extends AppCompatActivity
             switch (msg.what)
             {
                 case 1:
-                    //((EditText)findViewById(R.id.editText2)).setText((String)msg.obj);
+                    android.support.v7.widget.GridLayout gridLayout = findViewById(R.id.gridlayout);
+                    callback data = (callback) msg.obj;
+                    parseCallback parse = new parseCallback(data);
+                    ArrayList<TextView> list = parse.getTextView(getApplicationContext());
+                    for(TextView temp: list)
+                    {
+                        gridLayout.addView(temp);
+                    }
+                    break;
             }
         }
     };
@@ -66,65 +72,76 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*if (Login.loginWithZM() == null)
+        if (Login.loginWithZM() == null)
         {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
-        }*/
+        }
+        initview();
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        /*new Thread(new Runnable()
+        new Thread(new Runnable()
         {
             @Override
             public void run()
             {
                 callback backdata = Login.loginWithZM().getClassInformation();
-                Data data = backdata.getDateList()[0];
-                SelectCourse[] courses = data.getSelectCourseList();
                 Message message = new Message();
                 message.what = 1;
-                String send = "";
-                for (SelectCourse temp : courses)
-                {
-                    Log.e("E", temp.getAttendClassTeacher() + " " + temp.getCourseName());
-                    String add = "";
-                    for (TimeAndPlace tt : temp.getTimeAndPlaceList())
-                    {
-                        add += tt.getTeachingBuildingName() + tt.getClassroomName() + " ";
-                    }
-
-                    send += add + temp.getCourseName() + "\n";
-                }
-
-                message.obj = send;
+                message.obj = backdata;
                 handler.sendMessage(message);
             }
-        }).start();*/
-
-
-
-        TextView textView = new TextView(getApplicationContext());
-        textView.setText("this is a test");
-
-        android.support.v7.widget.GridLayout.Spec columnSpec = android.support.v7.widget.GridLayout.spec(3,1,1);
-        android.support.v7.widget.GridLayout.Spec rowSpec = android.support.v7.widget.GridLayout.spec(2,2,2);
-        android.support.v7.widget.GridLayout.LayoutParams layoutParams = new android.support.v7.widget.GridLayout.LayoutParams(rowSpec, columnSpec);
-        textView.setLayoutParams(layoutParams);
-
-        textView.setGravity(Gravity.CENTER);
-        textView.setWidth(-2);
-        textView.setHeight(-2);
-        textView.setBackgroundColor(Color.YELLOW);
-
-        android.support.v7.widget.GridLayout gridLayout = findViewById(R.id.gridlayout);
-
-        gridLayout.addView(textView);
-
-
+        }).start();
 
     }
+    public void initview()
+    {
+
+        viewPager = findViewById(R.id.viewpager);
+        final ArrayList<Fragment> fgLists = new ArrayList<>(2);
+        fgLists.add(new ClassFragment());
+        fgLists.add(new PersionFragment());
+        FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager())
+        {
+            @Override
+            public Fragment getItem(int i)
+            {
+                return fgLists.get(i);
+            }
+
+            @Override
+            public int getCount()
+            {
+                return 2;
+            }
+        };
+        viewPager.setAdapter(fragmentPagerAdapter);
+
+        final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+        {
+            @Override
+            public void onPageScrolled(int i, float v, int i1)
+            {
+
+            }
+
+            @Override
+            public void onPageSelected(int i)
+            {
+                navigation.getMenu().getItem(i).setChecked(true);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i)
+            {
+
+            }
+        });
+
+    }
+
 
     //从数据库读取登录状态
     public void initLoginState()
