@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -131,12 +132,15 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run()
                 {
-                    try
+                    while (findViewById(R.id.gridlayout) == null)
                     {
-                        Thread.sleep(500);//等待加载layout加载完成
-                    } catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
+
+                        try
+                        {
+                            Thread.sleep(1);
+                        } catch (InterruptedException e)
+                        {
+                        }
                     }
                     Message message = new Message();
                     message.what = 1;

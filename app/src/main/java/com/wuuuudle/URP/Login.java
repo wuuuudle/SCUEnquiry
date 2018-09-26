@@ -73,6 +73,7 @@ public class Login
             out.flush();
             out.close();
             String tString = getStringFromInputStream(conn.getInputStream());
+            conn.getInputStream().close();
             conn.disconnect();
             if (!tString.equals("The URL has moved <a href=\"http://202.115.47.141/index.jsp\">here</a>"))
                 return false;
@@ -122,6 +123,7 @@ public class Login
             String temp = conn.getHeaderField("Set-Cookie");
             String s[] = temp.split(";");
             temps = s[0];
+            conn.getInputStream().close();
             conn.disconnect();
         }
         catch (IOException e)
@@ -155,6 +157,7 @@ public class Login
 
             conn.connect();
             String ret = getStringFromInputStream(conn.getInputStream());
+            conn.getInputStream().close();
             conn.disconnect();
             return ret;
         }
@@ -189,6 +192,7 @@ public class Login
 
             conn.connect();
             String ret = getStringFromInputStream(conn.getInputStream());
+            conn.getInputStream().close();
             conn.disconnect();
             return callback.FormatData(ret);
         }
@@ -208,7 +212,6 @@ public class Login
         {
             result += line;
         }
-        is.close();
         return result;
     }
 }
