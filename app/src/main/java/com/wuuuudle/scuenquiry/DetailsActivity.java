@@ -21,5 +21,7 @@ public class DetailsActivity extends AppCompatActivity
         ((TextView)findViewById(R.id.attendClassTeacher)).setText("教师:"+intent.getStringExtra("attendClassTeacher"));
         ((TextView)findViewById(R.id.unit)).setText("学分:"+intent.getStringExtra("unit"));
         ((TextView)findViewById(R.id.examTypeName)).setText("考试类型:"+intent.getStringExtra("examTypeName"));
+        ((TextView)findViewById(R.id.coursePropertiesName)).setText("课程属性："+intent.getStringExtra("coursePropertiesName"));
+
     }
 }

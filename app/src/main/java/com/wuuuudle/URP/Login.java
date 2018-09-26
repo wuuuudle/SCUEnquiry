@@ -27,6 +27,12 @@ public class Login
         return login;
     }
 
+    public static void LoginOut()
+    {
+        login.cookies=null;
+        login=null;
+    }
+
     public boolean login(String zjh, String mm)
     {
         initJSESSIONID();
@@ -78,14 +84,14 @@ public class Login
         return true;
     }
 
-    public boolean login(String cookies)
+    /*public boolean login(String cookies)
     {
         this.cookies = cookies;
         String ret = ViewPage("http://202.115.47.141/index.jsp");
         if(ret.matches("正在跳转"))
             return false;
         return true;
-    }
+    }*/
 
     public void initJSESSIONID()
     {
@@ -202,6 +208,7 @@ public class Login
         {
             result += line;
         }
+        is.close();
         return result;
     }
 }

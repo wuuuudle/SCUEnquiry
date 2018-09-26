@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -25,6 +25,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
 {
     private ViewPager viewPager;
+    public ArrayList<TextView> list;
+    private static MainActivity context;
+    private static callback data;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener()
@@ -45,55 +48,116 @@ public class MainActivity extends AppCompatActivity
             return false;
         }
     };
-    Handler handler = new Handler()
+
+    static class MyHandler extends Handler
     {
+        private MainActivity mainActivity;
+
+        MyHandler(MainActivity activity)
+        {
+            mainActivity = activity;
+        }
+
         @Override
         public void handleMessage(Message msg)
         {
+            android.support.v7.widget.GridLayout gridLayout = mainActivity.findViewById(R.id.gridlayout);
             switch (msg.what)
             {
                 case 1:
-                    android.support.v7.widget.GridLayout gridLayout = findViewById(R.id.gridlayout);
-                    callback data = (callback) msg.obj;
-                    parseCallback parse = new parseCallback(data);
-                    ArrayList<TextView> list = parse.getTextView(getApplicationContext());
-                    for(TextView temp: list)
+                    mainActivity.viewPager.setCurrentItem(0, true);
+                    callback backdata = (callback) msg.obj;
+                    parseCallback parse = new parseCallback(backdata);
+                    mainActivity.list = parse.getTextView(mainActivity.getApplicationContext());
+                    for (TextView temp : mainActivity.list)
                     {
                         gridLayout.addView(temp);
                     }
+                    data = backdata;
+                    break;
+                case 2:
+                    try
+                    {
+                        for (TextView textView : mainActivity.list)
+                        {
+                            gridLayout.removeView(textView);
+                        }
+                    } catch (Exception e)//context.list为空的异常处理
+                    {
+
+                    }
+                    //获取课表
+                    new Thread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                callback backdata = Login.loginWithZM().getClassInformation();
+                                Message message = new Message();
+                                message.what = 1;
+                                message.obj = backdata;
+                                context.handler.sendMessage(message);
+                            } catch (NullPointerException e)
+                            {
+
+                            }
+
+                        }
+                    }).start();
                     break;
             }
         }
-    };
+    }
+
+    MyHandler handler = new MyHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        context = MainActivity.this;
+        initview();
         if (Login.loginWithZM() == null)
         {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
+            toLogin();
         }
-        initview();
-
-
-        new Thread(new Runnable()
+        if (data != null)
         {
-            @Override
-            public void run()
+            new Thread(new Runnable()
             {
-                callback backdata = Login.loginWithZM().getClassInformation();
-                Message message = new Message();
-                message.what = 1;
-                message.obj = backdata;
-                handler.sendMessage(message);
-            }
-        }).start();
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        Thread.sleep(500);//等待加载layout加载完成
+                    } catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    Message message = new Message();
+                    message.what = 1;
+                    message.obj = data;
+                    handler.sendMessage(message);
+                }
+            }).start();
+        }
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        switch (resultCode)
+        {
+            case 1:
+                handler.sendEmptyMessage(2);
+        }
+    }
+
     public void initview()
     {
 
@@ -142,6 +206,12 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public static void toLogin()
+    {
+        //跳转至登录界面
+        Intent intent = new Intent(context, LoginActivity.class);
+        context.startActivityForResult(intent, 0);
+    }
 
     //从数据库读取登录状态
     public void initLoginState()

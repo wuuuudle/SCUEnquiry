@@ -3,6 +3,7 @@ package com.wuuuudle.scuenquiry;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -57,6 +58,7 @@ public class parseCallback
                         intent.putExtra("attendClassTeacher",t1.getAttendClassTeacher());
                         intent.putExtra("unit",String.valueOf(t1.getUnit()));
                         intent.putExtra("examTypeName", t1.getExamTypeName());
+                        intent.putExtra("coursePropertiesName", t1.getCoursePropertiesName());
 
                         context.startActivity(intent);
                     }
@@ -71,7 +73,7 @@ public class parseCallback
     public static int getCurrentWeek()
     {
         long currentTime = System.currentTimeMillis();
-        return (int)(currentTime-startMilles)/(7*24*60*60*1000);
+        return (int)((currentTime-startMilles)/(7*24*60*60*1000));
     }
 
     private static TextView getTextView(int classDay, int classSessions, int continuingSession, String Description, int color, Context context)

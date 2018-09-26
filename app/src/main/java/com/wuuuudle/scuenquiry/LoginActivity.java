@@ -38,8 +38,8 @@ public class LoginActivity extends AppCompatActivity
                         if (Login.loginWithZM(zjh, mm) != null)
                         {
                             //页面跳转
-                            finish();
-                            Log.i("T", "log in");
+                            LoginActivity.this.setResult(1);
+                            LoginActivity.this.finish();
                         }
                         else
                         {
@@ -47,7 +47,6 @@ public class LoginActivity extends AppCompatActivity
                             Looper.prepare();
                             Toast.makeText(getApplicationContext(), "账号或密码错误", Toast.LENGTH_LONG).show();
                             Looper.loop();
-                            Log.i("T", "log faile");
                         }
                     }
                 }).start();

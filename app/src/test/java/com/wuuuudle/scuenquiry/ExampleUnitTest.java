@@ -38,4 +38,9 @@ public class ExampleUnitTest
             System.out.println(temp.getAttendClassTeacher()+" "+temp.getCourseName());
         }
     }
+    @Test
+    public void week()
+    {
+        System.out.println(parseCallback.getCurrentWeek());
+    }
 }
