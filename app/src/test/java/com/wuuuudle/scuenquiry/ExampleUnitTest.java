@@ -1,13 +1,12 @@
 package com.wuuuudle.scuenquiry;
 
-import android.util.Log;
-
-import com.wuuuudle.URP.*;
+import com.wuuuudle.URP.Login;
 
 import org.junit.Test;
 
-import static android.content.ContentValues.TAG;
-import static org.junit.Assert.*;
+import java.util.Scanner;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -21,23 +20,23 @@ public class ExampleUnitTest
     {
         assertEquals(4, 2 + 2);
     }
+
     @Test
     public void login_test()
     {
-        Login login=Login.loginWithZM("2017141463221", "244132");
-        if(login == null)
+        String KCH, KXH;
+        Login login = Login.loginWithZM("2017141463221", "244132");
+        if (login == null)
         {
             System.out.println("登录错误");
             return;
         }
-        callback backdata = login.getClassInformation();
-        Data data = backdata.getDateList()[0];
-        SelectCourse[] courses = data.getSelectCourseList();
-        for(SelectCourse temp:courses)
-        {
-            System.out.println(temp.getAttendClassTeacher()+" "+temp.getCourseName());
-        }
+        System.out.println("登录成功");
+        System.out.println(Login.loginWithZM().getXKInformation("104215020"));
+
+
     }
+
     @Test
     public void week()
     {
