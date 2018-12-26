@@ -1,5 +1,13 @@
 package com.wuuuudle.URP;
 
+
+import android.util.Pair;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +15,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class Login
 {
@@ -157,6 +167,56 @@ public class Login
         return null;
     }
 
+    public callback getClassInformation(String planCode)
+    {
+        String ur = "http://202.115.47.141/student/courseSelect/thisSemesterCurriculum/ajaxStudentSchedule/callback";
+        HttpURLConnection conn;
+        URL url;
+        try
+        {
+            url = new URL(ur);
+
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setReadTimeout(50000);
+            conn.setConnectTimeout(10000);
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setUseCaches(false);
+            conn.setInstanceFollowRedirects(false);
+
+            conn.setRequestProperty("Host", "202.115.47.141");
+            //conn.setRequestProperty("Content-Length", "42");
+            conn.setRequestProperty("Accept", "*/*");
+            conn.setRequestProperty("Origin", "http://202.115.47.141");
+            //conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+            conn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9");
+            conn.setRequestProperty("Cookie", cookies);
+            conn.setRequestProperty("Connection", "close");
+            conn.setRequestProperty("Cache-Control", "no-cache");
+            conn.setRequestProperty("Pragma", "no-cache");
+
+            String params = String.format("&planCode=%s", planCode);
+
+            OutputStream out = conn.getOutputStream();
+            out.write(params.getBytes());
+            out.flush();
+            out.close();
+            conn.connect();
+            String tString = getStringFromInputStream(conn.getInputStream());
+
+            conn.getInputStream().close();
+            conn.disconnect();
+            return callback.FormatData(tString);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public String getXKInformation(String KCH)
     {
@@ -242,6 +302,19 @@ public class Login
             e.printStackTrace();
         }
         return null;
+    }
+
+    public ArrayList<Pair<String, String>> getPlanCode()
+    {
+        ArrayList<Pair<String, String>> arrayList = new ArrayList<>();
+        String ss = this.ViewPage("http://202.115.47.141/student/courseSelect/calendarSemesterCurriculum/index");
+        Document document = Jsoup.parse(ss);
+        Elements s = document.selectFirst(".profile-info-value.col-xs-3").child(0).children();
+        for (Element temp : s)
+        {
+            arrayList.add(new Pair<String, String>(temp.text(), temp.attr("value")));
+        }
+        return arrayList;
     }
 
     public String XK(String dealType, String params)

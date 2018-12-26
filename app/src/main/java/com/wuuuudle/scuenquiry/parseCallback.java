@@ -3,6 +3,7 @@ package com.wuuuudle.scuenquiry;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.wuuuudle.URP.TimeAndPlace;
 
 import java.util.ArrayList;
 import java.util.Random;
+
 import com.wuuuudle.URP.callback;
 
 public class parseCallback
@@ -29,9 +31,8 @@ public class parseCallback
         callback = data;
     }
 
-    public ArrayList<TextView> getTextView(final Context context)
+    public ArrayList<TextView> getTextView(final Context context, int week)
     {
-        int week = getCurrentWeek();
         ArrayList<TextView> ret = new ArrayList<>();
         SelectCourse[] course = callback.getDateList()[0].getSelectCourseList();
         for (SelectCourse temp : course)
@@ -39,12 +40,13 @@ public class parseCallback
             final SelectCourse t1 = temp;
             int color = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
             final String descripe = temp.getCourseName() + "@";
-
+            if (temp.getTimeAndPlaceList() == null) continue;
             for (TimeAndPlace temp2 : temp.getTimeAndPlaceList())
             {
                 final TimeAndPlace t2 = temp2;
-                if(t2.getClassWeek().charAt(week) == '0')
-                    continue;
+                if (week >= 0)
+                    if (t2.getClassWeek().charAt(week) == '0')
+                        continue;
                 TextView textView = parseCallback.getTextView(temp2.getClassDay(), temp2.getClassSessions(), temp2.getContinuingSession(), descripe + temp2.getCampusName() + temp2.getTeachingBuildingName() + temp2.getClassroomName(), color, context);
                 textView.setOnClickListener(new View.OnClickListener()
                 {
@@ -52,18 +54,17 @@ public class parseCallback
                     public void onClick(View v)
                     {
                         Intent intent = new Intent(context, DetailsActivity.class);
-                        intent.putExtra("coureNumber",t1.getId().getCoureNumber());
-                        intent.putExtra("coureSequenceNumber",t1.getId().getCoureSequenceNumber());
-                        intent.putExtra("courseName",t1.getCourseName());
-                        intent.putExtra("attendClassTeacher",t1.getAttendClassTeacher());
-                        intent.putExtra("unit",String.valueOf(t1.getUnit()));
+                        intent.putExtra("coureNumber", t1.getId().getCoureNumber());
+                        intent.putExtra("coureSequenceNumber", t1.getId().getCoureSequenceNumber());
+                        intent.putExtra("courseName", t1.getCourseName());
+                        intent.putExtra("attendClassTeacher", t1.getAttendClassTeacher());
+                        intent.putExtra("unit", String.valueOf(t1.getUnit()));
                         intent.putExtra("examTypeName", t1.getExamTypeName());
                         intent.putExtra("coursePropertiesName", t1.getCoursePropertiesName());
 
                         context.startActivity(intent);
                     }
                 });
-
                 ret.add(textView);
             }
         }
@@ -73,7 +74,7 @@ public class parseCallback
     public static int getCurrentWeek()
     {
         long currentTime = System.currentTimeMillis();
-        return (int)((currentTime-startMilles)/(7*24*60*60*1000));
+        return (int) ((currentTime - startMilles) / (7 * 24 * 60 * 60 * 1000));
     }
 
     private static TextView getTextView(int classDay, int classSessions, int continuingSession, String Description, int color, Context context)

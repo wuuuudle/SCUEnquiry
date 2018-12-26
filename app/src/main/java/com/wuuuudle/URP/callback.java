@@ -44,5 +44,10 @@ public class callback
         this.dateList = dateList;
     }
 
+    public int getWeekLength()
+    {
+        return this.getDateList()[0].getSelectCourseList()[0].getTimeAndPlaceList()[0].getClassWeek().length();
+    }
+
 
 }
