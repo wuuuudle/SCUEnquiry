@@ -25,14 +25,10 @@ public class PersionFragment extends Fragment
         TextView textView = view.findViewById(R.id.week);
         textView.setText(String.valueOf("第" + (parseCallback.getCurrentWeek() + 1)) + "周");
 
-        view.findViewById(R.id.LogOut).setOnClickListener(new View.OnClickListener()
+        view.findViewById(R.id.LogOut).setOnClickListener(v ->
         {
-            @Override
-            public void onClick(View v)
-            {
-                Login.LoginOut();
-                MainActivity.toLogin();
-            }
+            Login.LoginOut();
+            MainActivity.toLogin();
         });
         return view;
     }

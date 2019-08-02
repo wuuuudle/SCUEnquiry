@@ -48,22 +48,18 @@ public class parseCallback
                     if (t2.getClassWeek().charAt(week) == '0')
                         continue;
                 TextView textView = parseCallback.getTextView(temp2.getClassDay(), temp2.getClassSessions(), temp2.getContinuingSession(), descripe + temp2.getCampusName() + temp2.getTeachingBuildingName() + temp2.getClassroomName(), color, context);
-                textView.setOnClickListener(new View.OnClickListener()
+                textView.setOnClickListener(v ->
                 {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        Intent intent = new Intent(context, DetailsActivity.class);
-                        intent.putExtra("coureNumber", t1.getId().getCoureNumber());
-                        intent.putExtra("coureSequenceNumber", t1.getId().getCoureSequenceNumber());
-                        intent.putExtra("courseName", t1.getCourseName());
-                        intent.putExtra("attendClassTeacher", t1.getAttendClassTeacher());
-                        intent.putExtra("unit", String.valueOf(t1.getUnit()));
-                        intent.putExtra("examTypeName", t1.getExamTypeName());
-                        intent.putExtra("coursePropertiesName", t1.getCoursePropertiesName());
-
-                        context.startActivity(intent);
-                    }
+                    Intent intent = new Intent(context, DetailsActivity.class);
+                    intent.putExtra("coureNumber", t1.getId().getCoureNumber());
+                    intent.putExtra("coureSequenceNumber", t1.getId().getCoureSequenceNumber());
+                    intent.putExtra("courseName", t1.getCourseName());
+                    intent.putExtra("attendClassTeacher", t1.getAttendClassTeacher());
+                    intent.putExtra("unit", String.valueOf(t1.getUnit()));
+                    intent.putExtra("examTypeName", t1.getExamTypeName());
+                    intent.putExtra("coursePropertiesName", t1.getCoursePropertiesName());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
                 });
                 ret.add(textView);
             }
@@ -73,8 +69,9 @@ public class parseCallback
 
     public static int getCurrentWeek()
     {
-        long currentTime = System.currentTimeMillis();
-        return (int) ((currentTime - startMilles) / (7 * 24 * 60 * 60 * 1000));
+//        long currentTime = System.currentTimeMillis();
+//        return (int) ((currentTime - startMilles) / (7 * 24 * 60 * 60 * 1000));
+        return 0;
     }
 
     private static TextView getTextView(int classDay, int classSessions, int continuingSession, String Description, int color, Context context)

@@ -1,8 +1,11 @@
 package com.wuuuudle.scuenquiry;
 
+import android.graphics.Bitmap;
 import android.icu.util.RangeValueIterator;
+import android.os.SystemClock;
 import android.widget.Spinner;
 
+import com.wuuuudle.URP.Captcha;
 import com.wuuuudle.URP.Login;
 import com.wuuuudle.URP.callback;
 
@@ -11,7 +14,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Test;
+import org.tensorflow.lite.Interpreter;
 
+import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
@@ -33,14 +39,14 @@ public class ExampleUnitTest
     public void login_test()
     {
         String KCH, KXH;
-        Login login = Login.loginWithZM("2017141463221", "244132");
+        Login login = Login.loginWithZM("2017141463221", "244132", null);
         if (login == null)
         {
             System.out.println("登录错误");
             return;
         }
         System.out.println("登录成功");
-        callback call= Login.loginWithZM().getClassInformation("2018-2019-1-1");
+        callback call = Login.loginWithZM().getClassInformation("2018-2019-1-1");
 
         System.out.println("11");
 
@@ -51,4 +57,6 @@ public class ExampleUnitTest
     {
         System.out.println(parseCallback.getCurrentWeek());
     }
+
+
 }

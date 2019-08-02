@@ -111,42 +111,38 @@ public class MainActivity extends AppCompatActivity
                 case 2:
                 {
                     //获取课表,学期,周次
-                    new Thread(new Runnable()
+                    new Thread(() ->
                     {
-                        @Override
-                        public void run()
+                        try
                         {
-                            try
+                            context.handler.sendEmptyMessage(4);
+                            context.callData = new HashMap<>();
+                            callback backdata = Login.loginWithZM().getClassInformation();
+
+                            Message message = new Message();
+                            message.what = 6;
+                            message.obj = backdata.getWeekLength();
+                            context.handler.sendMessage(message);
+
+
+                            ArrayList<Pair<String, String>> arrayList = Login.loginWithZM().getPlanCode();
+                            context.planCodeMap = new HashMap<>();
+
+                            context.callData.put(arrayList.get(0).first, backdata);
+                            for (Pair<String, String> temp : arrayList)
                             {
-                                context.handler.sendEmptyMessage(4);
-                                context.callData = new HashMap<>();
-                                callback backdata = Login.loginWithZM().getClassInformation();
-
-                                Message message = new Message();
-                                message.what = 6;
-                                message.obj = backdata.getWeekLength();
-                                context.handler.sendMessage(message);
-
-
-                                ArrayList<Pair<String, String>> arrayList = Login.loginWithZM().getPlanCode();
-                                context.planCodeMap = new HashMap<>();
-
-                                context.callData.put(arrayList.get(0).first, backdata);
-                                for (Pair<String, String> temp : arrayList)
-                                {
-                                    context.planCodeMap.put(temp.first, temp.second);
-                                }
-                                message = new Message();
-                                message.what = 3;
-                                message.obj = arrayList;
-                                context.handler.sendMessage(message);
-                                context.handler.sendEmptyMessage(5);
-                            } catch (NullPointerException e)
-                            {
-
+                                context.planCodeMap.put(temp.first, temp.second);
                             }
+                            message = new Message();
+                            message.what = 3;
+                            message.obj = arrayList;
+                            context.handler.sendMessage(message);
+                            context.handler.sendEmptyMessage(5);
+                        } catch (NullPointerException e)
+                        {
 
                         }
+
                     }).start();
                 }
                 break;
@@ -172,27 +168,23 @@ public class MainActivity extends AppCompatActivity
                                 context.handler.sendMessage(message);
                             } else
                             {
-                                new Thread(new Runnable()
+                                new Thread(() ->
                                 {
-                                    @Override
-                                    public void run()
-                                    {
-                                        context.handler.sendEmptyMessage(4);
+                                    context.handler.sendEmptyMessage(4);
 
-                                        callback data = Login.loginWithZM().getClassInformation(context.planCodeMap.get(planCode.getSelectedItem()));
-                                        context.callData.put((String) planCode.getSelectedItem(), data);
-                                        Message message = new Message();
-                                        message.what = 6;
-                                        message.obj = data.getWeekLength();
-                                        context.handler.sendMessage(message);
+                                    callback data1 = Login.loginWithZM().getClassInformation(context.planCodeMap.get(planCode.getSelectedItem()));
+                                    context.callData.put((String) planCode.getSelectedItem(), data1);
+                                    Message message = new Message();
+                                    message.what = 6;
+                                    message.obj = data1.getWeekLength();
+                                    context.handler.sendMessage(message);
 
-                                        message = new Message();
-                                        message.what = 1;
-                                        message.obj = data;
-                                        context.handler.sendMessage(message);
+                                    message = new Message();
+                                    message.what = 1;
+                                    message.obj = data1;
+                                    context.handler.sendMessage(message);
 
-                                        context.handler.sendEmptyMessage(5);
-                                    }
+                                    context.handler.sendEmptyMessage(5);
                                 }).start();
                             }
                         }
@@ -270,40 +262,36 @@ public class MainActivity extends AppCompatActivity
         }
         if (data != null)
         {
-            new Thread(new Runnable()
+            new Thread(() ->
             {
-                @Override
-                public void run()
+                while (findViewById(R.id.gridlayout) == null)
                 {
-                    while (findViewById(R.id.gridlayout) == null)
+                    try
                     {
-                        try
-                        {
-                            Thread.sleep(1);
-                        } catch (InterruptedException e)
-                        {
-                        }
-                    }
-                    Message message = new Message();
-                    message.what = 1;
-                    message.obj = data;
-                    handler.sendMessage(message);
-
-                    planCodeMap = new HashMap<>();
-                    for (Pair<String, String> temp : planCode)
+                        Thread.sleep(1);
+                    } catch (InterruptedException e)
                     {
-                        planCodeMap.put(temp.first, temp.second);
                     }
-                    message = new Message();
-                    message.what = 3;
-                    message.obj = planCode;
-                    handler.sendMessage(message);
-
-                    message = new Message();
-                    message.what = 6;
-                    message.obj = weekLength;
-                    handler.sendMessage(message);
                 }
+                Message message = new Message();
+                message.what = 1;
+                message.obj = data;
+                handler.sendMessage(message);
+
+                planCodeMap = new HashMap<>();
+                for (Pair<String, String> temp : planCode)
+                {
+                    planCodeMap.put(temp.first, temp.second);
+                }
+                message = new Message();
+                message.what = 3;
+                message.obj = planCode;
+                handler.sendMessage(message);
+
+                message = new Message();
+                message.what = 6;
+                message.obj = weekLength;
+                handler.sendMessage(message);
             }).start();
         }
 

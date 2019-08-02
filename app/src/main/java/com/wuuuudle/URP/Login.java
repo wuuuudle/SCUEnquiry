@@ -1,6 +1,8 @@
 package com.wuuuudle.URP;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Pair;
 
 import org.jsoup.Jsoup;
@@ -16,17 +18,16 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class Login
 {
     public String cookies = null;
     private static Login login = null;
 
-    public static Login loginWithZM(String zjh, String mm)
+    public static Login loginWithZM(String zjh, String mm, Captcha captcha)
     {
         Login log = new Login();
-        if (log.login(zjh, mm))
+        if (log.login(zjh, mm, captcha))
         {
             login = log;
         }
@@ -44,10 +45,11 @@ public class Login
         login = null;
     }
 
-    public boolean login(String zjh, String mm)
+    public boolean login(String zjh, String mm, Captcha captcha)
     {
         initJSESSIONID();
         String ur = "http://202.115.47.141/j_spring_security_check";
+        String cap = captcha.OCR(this.getCaptcha());
         HttpURLConnection conn;
         URL url;
         try
@@ -63,7 +65,6 @@ public class Login
             conn.setUseCaches(false);
             conn.setInstanceFollowRedirects(false);
             conn.setRequestProperty("Host", "202.115.47.141");
-            conn.setRequestProperty("Content-Length", "59");
             conn.setRequestProperty("Cache-Control", "max-age=0");
             conn.setRequestProperty("Origin", "http://202.115.47.141");
             conn.setRequestProperty("Upgrade-Insecure-Requests", "1");
@@ -77,7 +78,7 @@ public class Login
             conn.setRequestProperty("Connection", "close");
 
             conn.connect();
-            String params = String.format("j_username=%s&j_password=%s&j_captcha1=error", zjh, mm);
+            String params = String.format("j_username=%s&j_password=%s&j_captcha=%s", zjh, mm, cap);
             //params = "j_username=2017141463221&j_password=244132&j_captcha1=error";
             OutputStream out = conn.getOutputStream();
             out.write(params.getBytes());
@@ -218,57 +219,6 @@ public class Login
         return null;
     }
 
-    public String getXKInformation(String KCH)
-    {
-        String ur = "http://202.115.47.141/student/courseSelect/freeCourse/courseList";
-        HttpURLConnection conn;
-        URL url;
-        try
-        {
-            url = new URL(ur);
-
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setReadTimeout(50000);
-            conn.setConnectTimeout(10000);
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setUseCaches(false);
-            conn.setInstanceFollowRedirects(false);
-
-            conn.setRequestProperty("Host", "202.115.47.141");
-            //conn.setRequestProperty("Content-Length", "42");
-            conn.setRequestProperty("Accept", "*/*");
-            conn.setRequestProperty("Origin", "http://202.115.47.141");
-            //conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            conn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9");
-            conn.setRequestProperty("Cookie", cookies);
-            conn.setRequestProperty("Connection", "close");
-            conn.setRequestProperty("Cache-Control", "no-cache");
-            conn.setRequestProperty("Pragma", "no-cache");
-
-            String params = String.format("searchtj=%s&xq=0&jc=0&kyl=0&kclbdm=", KCH);
-
-            OutputStream out = conn.getOutputStream();
-            out.write(params.getBytes());
-            out.flush();
-            out.close();
-            conn.connect();
-            String tString = getStringFromInputStream(conn.getInputStream());
-
-            conn.getInputStream().close();
-            conn.disconnect();
-            return tString;
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public String ViewPage(String ur)
     {
         HttpURLConnection conn;
@@ -317,89 +267,36 @@ public class Login
         return arrayList;
     }
 
-    public String XK(String dealType, String params)
+    public Bitmap getCaptcha()
     {
-        String ur = "http://202.115.47.141/student/courseSelect/freeCourse/waitingfor?dealType=" + dealType;
+        String ur = "http://202.115.47.141/img/captcha.jpg";
         HttpURLConnection conn;
         URL url;
         try
         {
             url = new URL(ur);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setReadTimeout(50000);
-            conn.setConnectTimeout(10000);
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setUseCaches(false);
-            conn.setInstanceFollowRedirects(false);
 
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(10000);
+            conn.setRequestProperty("Accept",
+                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+            conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
+            conn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9");
+            conn.setRequestProperty("Connection", "keep-alive");
             conn.setRequestProperty("Host", "202.115.47.141");
-            conn.setRequestProperty("Cache-Control", "max-age=0");
-            conn.setRequestProperty("Origin", "http://202.115.47.141");
             conn.setRequestProperty("Upgrade-Insecure-Requests", "1");
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
-            conn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-            conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            conn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9");
+            conn.setRequestProperty("User-Agent",
+                    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.81 Safari/537.36");
             conn.setRequestProperty("Cookie", cookies);
-            conn.setRequestProperty("Connection", "close");
-
-            OutputStream out = conn.getOutputStream();
-            out.write(params.getBytes());
-            out.flush();
-            out.close();
             conn.connect();
-            String tString = getStringFromInputStream(conn.getInputStream());
 
-            conn.getInputStream().close();
+            InputStream is = conn.getInputStream();
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            is.close();
             conn.disconnect();
-            return tString;
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public String XKJG(String ur, String params)
-    {
-        HttpURLConnection conn;
-        URL url;
-        try
-        {
-            url = new URL(ur);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setReadTimeout(50000);
-            conn.setConnectTimeout(10000);
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setUseCaches(false);
-            conn.setInstanceFollowRedirects(false);
-
-            conn.setRequestProperty("Host", "202.115.47.141");
-            conn.setRequestProperty("Origin", "http://202.115.47.141");
-
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
-            conn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-            conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            conn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9");
-            conn.setRequestProperty("Cookie", cookies);
-            conn.setRequestProperty("Connection", "close");
-
-            OutputStream out = conn.getOutputStream();
-            out.write(params.getBytes());
-            out.flush();
-            out.close();
-            conn.connect();
-            String tString = getStringFromInputStream(conn.getInputStream());
-
-            conn.getInputStream().close();
-            conn.disconnect();
-            return tString;
+            return bitmap;
         } catch (IOException e)
         {
             e.printStackTrace();
